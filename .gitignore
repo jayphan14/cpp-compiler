@@ -1,0 +1,6 @@
+build/
+*.asm
+*.merl
+*.mips
+*.o
+.DS_Store
