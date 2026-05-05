@@ -4,3 +4,6 @@ build/
 *.mips
 *.o
 .DS_Store
+
+# committed runtime libraries
+!runtime/*.merl
