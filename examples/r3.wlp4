@@ -1,0 +1,25 @@
+int wain(int* a, int b) {
+  int* copy = NULL;
+  int i = 0;
+  int j = 0;
+  int* useless = NULL;
+  useless = new int[1023];
+  j = 0;
+  *(useless+j) = i*j;
+  j=j+1;
+  delete [] useless;
+  i = i+1;
+  copy = new int[b];
+  i = 0;
+  *(copy+i) = *(a+i);
+  i = i+1;
+  j = 0;
+  useless = new int[1];
+  *useless = 241;
+  delete [] useless;   
+  i = 0;
+  println(*(a+i));
+  i=i+1;
+  delete [] copy;
+  return 0;
+}
