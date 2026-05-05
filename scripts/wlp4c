@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# wlp4c — drive the four compiler stages and link with MERL runtime.
+#
+# Usage: wlp4c <input.wlp4> [output.mips]
+#   Pipes:  scanner | parser | typecheck | codegen   -> .asm
+#   Links:  cs241.linkasm | cs241.linker (+ print.merl, alloc.merl)
+#   Loads:  cs241.merl 0                              -> .mips
+#
+# Run the produced .mips with:  mips.twoints <output.mips>
+
+set -euo pipefail
+
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+  echo "Usage: $0 <input.wlp4> [output.mips]" >&2
+  exit 1
+fi
+
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+BUILD="$PROJECT_ROOT/build"
+RUNTIME="$PROJECT_ROOT/runtime"
+
+INPUT="$1"
+OUTPUT="${2:-${INPUT%.wlp4}.mips}"
+
+if [[ ! -x "$BUILD/scanner" ]]; then
+  echo "Error: build/ missing. Run 'make' first." >&2
+  exit 1
+fi
+
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+"$BUILD/scanner"   < "$INPUT"        > "$TMP/tokens"
+"$BUILD/parser"    < "$TMP/tokens"   > "$TMP/parse"
+"$BUILD/typecheck" < "$TMP/parse"    > "$TMP/typed"
+"$BUILD/codegen"   < "$TMP/typed"    > "$TMP/asm"
+
+cs241.linkasm < "$TMP/asm" > "$TMP/main.merl"
+cs241.linker "$TMP/main.merl" "$RUNTIME/print.merl" "$RUNTIME/alloc.merl" > "$TMP/linked.merl"
+cs241.merl 0 < "$TMP/linked.merl" > "$OUTPUT" 2>/dev/null
+
+echo "Wrote $OUTPUT"
+echo "Run with:  mips.twoints $OUTPUT"
