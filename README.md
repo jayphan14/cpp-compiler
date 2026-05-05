@@ -1,8 +1,8 @@
 # cpp-compiler
 
-A small compiler for **WLP4** (a C-like language taught in UWaterloo's CS241)
-that targets **MIPS** assembly. Restructured from my course assignments into a
-single project with a unified build and driver.
+A small compiler for **WLP4** (a C-like language) that targets **MIPS**
+assembly. Built as a class project for UWaterloo's CS241 (Foundations of
+Sequential Programs).
 
 ## Pipeline
 
